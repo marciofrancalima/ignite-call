@@ -10,6 +10,7 @@ import { ArrowRight } from 'phosphor-react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { api } from '../../../lib/axios'
 
 import { getWeekDays } from '../../../utils/get-week-days'
 import { convertTimeToMinutes } from '../../../utils/convert-time'
@@ -96,8 +97,8 @@ export default function TimeIntervals() {
   const intervals = watch('intervals')
 
   async function handleSetTimeIntervals(data: any) {
-    const formData = data as timeIntervalsFormOutput
-    console.log(formData)
+    const { intervals } = data as timeIntervalsFormOutput
+    await api.post('/users/time-intervals', { intervals })
   }
 
   return (
