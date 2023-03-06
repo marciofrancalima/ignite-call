@@ -4,7 +4,9 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import dayjs from 'dayjs'
+import { useRouter } from 'next/router'
 
+import { api } from '../../../../../lib/axios'
 import { ConfirmForm, FormActions, FormError, FormHeader } from './styles'
 
 const confirmFormSchema = z.object({
@@ -21,9 +23,6 @@ interface ConfirmStepProps {
 }
 
 export function ConfirmStep({ schedulingDate, goBack }: ConfirmStepProps) {
-  schedulingDate,
-  onCancelConfirmation,
-}: ConfirmStepProps) {
   const {
     register,
     handleSubmit,
@@ -32,8 +31,16 @@ export function ConfirmStep({ schedulingDate, goBack }: ConfirmStepProps) {
     resolver: zodResolver(confirmFormSchema),
   })
 
-  function handleConfirmScheduling(data: ConfirmFormData) {
-    console.log(data)
+  const router = useRouter()
+  const username = String(router.query.username)
+
+  async function handleConfirmScheduling(data: ConfirmFormData) {
+    await api.post(`users/${username}/schedule`, {
+      ...data,
+      date: schedulingDate,
+    })
+
+    goBack()
   }
 
   const describedDate = dayjs(schedulingDate).format('DD[ de ]MMMM[ de ]YYYY')
